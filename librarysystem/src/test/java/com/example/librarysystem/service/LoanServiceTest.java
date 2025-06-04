@@ -102,5 +102,45 @@ class LoanServiceTest {
 
         assertEquals("Användare med ID 1 hittades ej", ex.getMessage());
     }
+
+    @Test
+    void createLoan_shouldSetDueDateTo14DaysFromNow() {
+        Long userId = 1L;
+        Long bookId = 10L;
+
+        Book book = new Book();
+        book.setAvailableCopies(3);
+
+        User user = new User();
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Loan loan = loanService.createLoan(userId, bookId);
+
+        LocalDate expectedDueDate = LocalDate.now().plusDays(14);
+        assertEquals(expectedDueDate, loan.getDueDate());
+    }
+
+    @Test
+    void createLoan_shouldNotAllowLoanIfBookHasZeroCopies() {
+        Long userId = 1L;
+        Long bookId = 10L;
+
+        Book book = new Book();
+        book.setAvailableCopies(0);
+
+        User user = new User();
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            loanService.createLoan(userId, bookId);
+        });
+
+        assertEquals("Inga tillgängliga exemplar av boken", exception.getMessage());
+    }
 }
 

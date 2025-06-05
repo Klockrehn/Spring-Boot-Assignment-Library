@@ -22,7 +22,14 @@ public class BookService {
     public List<BookDTO> getAllBooks() {
         return bookRepository.findAll()
                 .stream()
-                .map(this::convertToDTO)
+                .map(book -> {
+                    try {
+                        return convertToDTO(book);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(dto -> dto != null)
                 .collect(Collectors.toList());
     }
 

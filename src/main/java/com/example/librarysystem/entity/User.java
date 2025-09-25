@@ -2,6 +2,7 @@ package com.example.librarysystem.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -26,6 +27,12 @@ public class User {
 
     @Column(name = "registration_date")
     private LocalDate registrationDate;
+
+    @Column(nullable = false)
+    private String role;
+
+    @Column(nullable = false)
+    private Integer enabled;
 
     public User() {}
 
@@ -54,5 +61,21 @@ public class User {
 
     public LocalDate getRegistrationDate() { return registrationDate; }
     public void setRegistrationDate(LocalDate registrationDate) { this.registrationDate = registrationDate; }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Integer getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Integer enabled) {
+        this.enabled = enabled;
+    }
 }
 
